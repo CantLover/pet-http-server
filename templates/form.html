@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Форма обращения</title>
+</head>
+<body>
+    <h1>Форма обращения</h1>
+    <form action="/submit" method="POST">
+        <label for="authorName">Имя автора:</label>
+        <input type="text" id="authorName" name="authorName" required><br>
+
+        <label for="authorLocation">Местоположение автора:</label>
+        <input type="text" id="authorLocation" name="authorLocation" required><br>
+
+        <label for="authorMail">Почта автора:</label>
+        <input type="email" id="authorMail" name="authorMail" required><br>
+
+       
+        <label for="appealText">Текст обращения:</label><br>
+        <textarea id="appealText" name="appealText" rows="4" cols="50" required></textarea><br>
+
+        <input type="submit" value="Отправить">
+    </form>
+</body>
+</html>
