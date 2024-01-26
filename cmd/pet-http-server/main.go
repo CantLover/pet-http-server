@@ -1,13 +1,13 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"time"
 
-	_ "github.com/lib/pq"
+	"github.com/jackc/pgx/v4"
+	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 const (
@@ -22,15 +22,10 @@ type Appeal struct {
 	authorName, authorLocation, authorMail, appealDate, appealText string
 }
 
-var db *sql.DB
 var connStr string = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s", host, port, user, password, dbname)
 
-func createListTable(db *sql.DB) {
-	dbConErr := db.Ping()
-	if dbConErr != nil {
-		fmt.Println("smth wrong with ping in CREATE TABLE STEP")
-		log.Fatal(dbConErr)
-	}
+func createListTable() {
+
 	_, createTableErr := db.Exec(`
 		CREATE TABLE IF NOT EXISTS appeals_list (
 			id SERIAL PRIMARY KEY,
@@ -94,29 +89,11 @@ func formHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
-
 func listHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "../../templates/list.html")
 }
 
 func main() {
-	//connectToDB()
-	var dbConErr error
-	db, dbConErr = sql.Open("postgres", connStr)
-
-	if dbConErr != nil {
-		log.Println("Error at creating db")
-		log.Fatal(dbConErr)
-	} else {
-		fmt.Println("Successfully connected to the database")
-	}
-
-	dbConErr = db.Ping()
-	if dbConErr != nil {
-		fmt.Println("smth wrong with ping in MAIN")
-		log.Fatal(dbConErr)
-	}
-	defer db.Close()
 
 	createListTable(db)
 
@@ -131,4 +108,5 @@ func main() {
 	}
 
 	fmt.Println("Starting server at port 8082")
+	defer db.Close()
 }
